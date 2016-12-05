@@ -1,6 +1,6 @@
 var loader = function() {
 
-	dom.use(['link', 'script']);
+	dom.using('link', 'script');
 
 	var sources = [];
 

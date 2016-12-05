@@ -4,7 +4,7 @@ loader
 	.loadText("test/testtext.html")
 	.loadTemplate("testing", "test/testtext.html")
 	.perform(function(){
-		dom.use(['p', 'img']);
+		dom.using('p', 'img');
 		
 		var section = templates.get("testing");
 		section._title.update("my title");

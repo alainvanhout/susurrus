@@ -146,8 +146,8 @@ var dom = function() {
 		return extend(element);
 	};
 
-	dom.use = function(tagNames) {
-		any(tagNames, function(tagName) {
+	dom.using = function() {
+		[].forEach.call(arguments, function(tagName) {
 			addFactory(tagName);
 		});
 		factoryExtend(dom);
