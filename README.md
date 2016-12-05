@@ -15,9 +15,9 @@ The API of `loader` provides of the following methods, which are all chainable i
 - loadText(url) : ensures that the file of that url will have been loaded and that its content will be available as a string (see below)
 - loadTemplate(templateKey, url) : ensures that the file of that url will have been loaded and that its content will be available as a template (see below)
 
-The loading of these files will occur asynchronously, and as concurrently as the browser in question allows.
+The loading of these files will occur asynchronously, and as concurrently as the browser in question allows. It is important to note that in the descriptions above, the term 'ensures' reflects the fact that `loader` will make sure that a given file is loaded at least once, and ideally no more than once (that is, based on any calls that are made to `loader` methods -- i.e. as far as it's under the control of `loader`).
 
-The above chaining also allows for the following method, which however does not allow further chaining
+The above chaining also allows for the following method, which itself however does not allow further chaining
 - perform(callback) : the code that will be performed after all the other 
 
 Additionally, `loader` also provides the following utility method
@@ -105,6 +105,71 @@ dom(document.getElementById('some-id')).update('some text');
 
 ## templates
 
-TODO
+The API of `templates` object consists of a number of methods which will accept html, either as text or a DOM node (see below), and will turn it into a template for which instances can be requested via `templates.get(templateKey)`. The template should have a single root node and can (but need not) contain elements with a `temp-ref` attribute, the values of which should be unique within each template.
 
+```html
+<div>
+  <div class='some-css-class'>
+	  <h2 temp-ref="title"></h2>
+  </div>  
+	<div class='divider'/>
+  <div class='wrapper-css'>
+    <div temp-ref="contents"></div>
+</div>
+```
+The template instance that is returned will expose these temp-ref elements via fields that are prefixed by an underscore. Note that these DOM elements will have already been extended using `dom`.
 
+```javascript
+dom.using('p');
+
+var section = templates.get('my-section');
+
+section._title.update('my title');
+section._contents.p('the contents of my section');
+```
+
+Adding templates can be done manually via the method below, but the easiest usage is via `loader.loadTemplate(templateKey, someUrl)`.
+
+__addAsRoot(templateKey, rootNode)__
+
+> This method takes a html node with possible children as treats it as the root of the template. When requesting an instance of the template, the root node is copied.
+
+__addAsFragmentfunction(templateKey, fragmentNode)__
+
+> When the fragmentNode contains a single element that has `temp-root`as an attribute, then that node will be seen as the template root and will be passed on to addAsRoot. When no such element exists, the fragmentNode is taken as the root node. When more than one node has `temp-root`as an attribute, an error is thrown.
+
+__addAsText(templateKey, text)__
+
+> This method will parse the text to html and pass it on to the the `addAsFragmentfunction` method.
+
+__add(templateKey, value)__
+
+> This method will pass the passed value on to the relevant method among the ones described above.
+
+Using the `temp-root` approach, it's possible to create a template html file which itself is valid html, and which contains references to the necessary JavaScript and CSS files for it to be rendered correctly. When using `loader.loadTemplate(templateKey, someUrl)`, these will on-the-fly be added to the dependencies of the template-to-be-loaded, in such a way that the template will only be interpreted as as loaded once those dependencies are also done loading. To make the dependencies work both as part of the template and as part of the valid html file, the script and link elements also contain `temp-source` attributes besides their src and href attributes. 
+
+In the example below, note that 'mock-only.js' does not have a `temp-source` attribute. This means it _will_ be performed as part of the template html file (which enables it to e.g. add mock values), but will not be loaded as a dependency of the template as used by `loader` and `templates`.
+
+```html
+<!doctype html>
+<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <title>template example</title>
+	  <script src="mock-only.js" ></script>
+	  <script src="example.js" temp-source="static/example/example.js"></script>
+	  <link href="example.css" type="text/css" rel="stylesheet" temp-source="static/example/example.css" >
+	</head>
+	<body>
+    <div temp-root>
+      <div class='some-css-class'>
+        <h2 temp-ref="title"></h2>
+      </div>  
+      <div class='divider'/>
+      <div class='wrapper-css'>
+        <div temp-ref="contents"></div>
+      </div>
+    </div>
+	</body>
+</html>
+```
