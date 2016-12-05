@@ -43,12 +43,9 @@ which would ensure that loading of the css file in question will already have st
 
 To able to create DOM elements, it's necessary to specify which element types should be provided.
 ```javascript
-dom.use(['div', 'p', 'a', 'img']);
+dom.using('div', 'p', 'a', 'img');
 ```
-In case of a single type, the following will do
-```javascript
-dom.use('div');
-```
+
 Once an element type has been declared for use (at least once), it will be available for creation
 ```javascript
 var div = dom.div();
