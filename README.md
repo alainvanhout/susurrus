@@ -50,11 +50,38 @@ Once an element type has been declared for use (at least once), it will be avail
 ```javascript
 var div = dom.div();
 ```
-Any element will accept as parameters
-- another element : `dom.div(dom.p())` will add a paragraph to the div that is created
-- a string : `dom.p('some text')` will add the text to the paragraph that is created
-- an object to be used for additing attributes `dom.img({ src : 'someUrl' })`
-- a combination of an element or string with an object : `dom.a('some text', { href : 'someUrl' })`
+Any element will accept parameters in a number of variations
+```javascript
+// create a div and add a paragraph to it
+dom.div(dom.p())
+
+// create a paragraph and add some text to it
+dom.p('some text')
+
+// add attributes by supplying an object as a parameter
+dom.img({ src : 'someUrl' })
+
+// combine adding some text with setting an attribute
+dom.a('some text', { href : 'someUrl' })
+
+// add an array of elements, and several attributes
+dom.div([dom.p('foo'), dom.p('bar'), dom.p('etc')],{'class':'foo', alt:'bar'});
+// or in reverse order
+dom.div({'class':'foo', alt:'bar'}, [dom.p('foo'), dom.p('bar'), dom.p('etc')]);
+
+// supply a function as a second parameter, to modify the first one
+dom.div('hello', function(text){ return text + ' world' });
+
+// do the same, but with the first parameter being an array of strings
+var ar = ["one", "two", "three"];
+dom.div(ar, function(text){ return dom.p(text+'!')});
+// or if you don't need the exclamation point
+dom.div(ar, dom.p);
+
+// do the same, but with the first being an array of objects
+var ar = [{count:"one"}, {count:"two"}, {count:"three"}];
+dom.div(ar, function(item){ return dom.p(item.count+'!') });
+```
 
 To the elements, it will add the following methods
 - add(parameters) : accepts parameters in the same way as the creation methods of `dom` 
