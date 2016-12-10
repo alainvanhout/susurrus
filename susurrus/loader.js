@@ -44,10 +44,42 @@ var loader = function() {
 				this.callbacks.forEach(function(callback) {
 					callback();
 				});
+				if (typeof this.primary === 'function'){
+					this.result = this.primary();
+				}
+				return this.result;
 			}
 		},
-		perform : function(callback) {
-			this.callbacks.push(callback);
+		perform : function(param1, param2) {
+			var primary = null;
+			var alias = null;
+			
+			if (typeof param1 === 'function' && param2 == null){
+				primary = param1;
+			} else if (typeof param1 === 'string' && param2 == null) {
+				alias = param1;
+			} else if (typeof param1 === 'string' && typeof param2 == 'function') {
+				alias = param1;
+				primary = param2;
+			} else {
+				throw Error("Cannot parse input of perform call");
+			}
+			
+			this.primary = function(){
+				var result = null;
+				if (primary !== null){
+					result = primary();
+				}
+				if (alias){
+					var source = findSource(alias);
+					if (!source) {
+						source = new Source(alias);
+						sources.push(source);
+					}
+					source.result = result;
+					source.setToLoaded();
+				}
+			};
 		},
 		loadJS : function(sourceUrl) {
 			return loadJS(sourceUrl, this);
@@ -78,8 +110,17 @@ var loader = function() {
 		return source.text;
 	}
 
+	function resultFor(sourceUrl) {
+		var source = findSource(sourceUrl);
+		if (source === null) {
+			throw Error("Could not find source for url", sourceUrl);
+		}
+		return source.result;
+	}
+
+
 	function addLoadListener(element, source) {
-		element.addEventListener("load", function() {
+		element.addEventListener('load', function() {
 			setTimeout(function() {
 				source.setToLoaded();
 			});
@@ -129,6 +170,10 @@ var loader = function() {
 			addLoadListener(e, source);
 			document.head.appendChild(e);
 		});
+	};
+
+	function loadAlias(sourceUrl, response) {
+		return load(sourceUrl, response, function(){});
 	};
 
 	function loadCSS(sourceUrl, response) {
@@ -195,7 +240,9 @@ var loader = function() {
 		loadCSS : loadCSS,
 		loadText : loadText,
 		loadTemplate : loadTemplate,
+		load : loadAlias,
 		textFor : textFor,
+		resultFor : resultFor,
 		sources : sources,
 		findSource : findSource
 	};
