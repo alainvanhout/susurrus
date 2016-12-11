@@ -47,7 +47,7 @@ var dom = function() {
 					parent.setAttribute(key, props[key]);
 				});
 			}
-			if (children || modifier) {
+			if (children != null || modifier) {
 				any(children, function(child) {
 					if (child && child.tagName) {
 						child = dom(child);
@@ -61,7 +61,7 @@ var dom = function() {
 		append : function(parent, child){
 			if (typeof child === 'object' && child.tagName){
 				parent.appendChild(child);
-			} else if (typeof child === 'string') {
+			} else if (typeof child === 'string' || typeof child === 'number') {
 				parent.innerHTML += child;
 			} else {
 				throw Error('Unable to append child of type' + (typeof child));
@@ -134,6 +134,9 @@ var dom = function() {
 	}
 
 	function extend(element) {
+		if (!element.tagName){
+		    console.warn("Element does not have a tagName: ", element);
+		}
 		basicExtend(element);
 		factoryExtend(element);
 		return element;
