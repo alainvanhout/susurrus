@@ -44,7 +44,15 @@ var dom = function() {
 			if (props) {
 				var keys = Object.keys(props);
 				keys.forEach(function(key) {
-					parent.setAttribute(key, props[key]);
+					if (key === '$class'){
+						if (parent.classList){
+							parent.classList.add(props[key]);
+						} else {
+							parent.className += ' ' + props[key];
+						}
+					} else {
+						parent.setAttribute(key, props[key]);
+					}
 				});
 			}
 			if (children != null || modifier) {

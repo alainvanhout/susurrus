@@ -71,7 +71,7 @@ var templates = function(){
 			instance['_' + refId] = dom(node);
 		});
 		
-		return instance;
+		return dom(instance);
 	};
 
 	return manager;

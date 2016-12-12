@@ -115,7 +115,7 @@ var loader = function() {
 		if (source === null) {
 			throw Error("Could not find source for url", sourceUrl);
 		}
-		return source.result;
+		return source.result || source.text;
 	}
 
 
@@ -242,7 +242,7 @@ var loader = function() {
 		loadTemplate : loadTemplate,
 		load : loadAlias,
 		textFor : textFor,
-		resultFor : resultFor,
+		get : resultFor,
 		sources : sources,
 		findSource : findSource
 	};

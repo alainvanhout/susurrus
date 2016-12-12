@@ -8,7 +8,9 @@ loader
 		
 		var section = templates.get("testing");
 		section._title.update("my title");
-		section._contents.img({src : "test/spinner.gif"});
+		var img = section._contents.img({src : "test/spinner.gif", $class:'foobar'});
+		img.add({$class:'other'});
+		
 		document.body.appendChild(section);
 		
 		// enabling the following line would already start loading the css, as a matter of non-blocking pre-loading 
