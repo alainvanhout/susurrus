@@ -92,6 +92,9 @@ var loader = function() {
 		},
 		loadTemplate : function(templateKey, sourceUrl) {
 			return loadTemplate(templateKey, sourceUrl, this);
+		},
+		load : function(sourceUrl) {
+			return loadAlias(sourceUrl, this);
 		}
 	};
 
