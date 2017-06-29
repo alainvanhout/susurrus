@@ -50,34 +50,26 @@ var loader = function() {
 				return this.result;
 			}
 		},
-		perform : function(param1, param2) {
-			var primary = null;
-			var alias = null;
-			
-			if (typeof param1 === 'function' && param2 == null){
-				primary = param1;
-			} else if (typeof param1 === 'string' && param2 == null) {
-				alias = param1;
-			} else if (typeof param1 === 'string' && typeof param2 == 'function') {
-				alias = param1;
-				primary = param2;
-			} else {
-				throw Error("Cannot parse input of perform call");
-			}
-			
+		perform : function(fn) {
+			var response = this;
 			this.primary = function(){
 				var result = null;
-				if (primary !== null){
-					result = primary();
+				if (fn !== null){
+					result = fn();
 				}
-				if (alias){
-					var source = findSource(alias);
+				if (response.alias){
+					var source = findSource(response.alias);
 					if (!source) {
-						source = new Source(alias);
+						source = new Source(response.alias);
 						sources.push(source);
 					}
 					source.result = result;
 					source.setToLoaded();
+				}
+			};
+			return {
+				as : function(alias){
+					response.alias = alias;
 				}
 			};
 		},
@@ -222,11 +214,11 @@ var loader = function() {
 				xhr(source, function(source) {
 					var template = templates.add(templateKey, source.text);
 					if (template.sources.length > 0){
-						template.sources.forEach(function(source){
+						template.sources.forEach(function(templateSource){
 							// create mutual link, to ensure that response is only performed after additional source has been loaded
 							// and that the additional source also nudges the response to re-evaluate its state (and possibly be ready to perform)
-							response.sources.push(source);
-							source.responses.push(response);
+							response.sources.push(templateSource);
+							templateSource.responses.push(response);
 						});
 					}
 					// only set to loaded when the potential other source dependencies have been added

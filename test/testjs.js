@@ -1,5 +1,5 @@
 loader
 	.loadText("test/testtext.html")
-	.perform("my-alias", function(){
+	.perform(function(){
 		return "foobar";
-	});
+	}).as("my-alias");
