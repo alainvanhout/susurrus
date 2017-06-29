@@ -19,7 +19,7 @@ loader
 		setTimeout(function(){
 			loader
 				// enabling the following line avoid having to read the css dependency from the html dependency
-				//.loadTemplate("lorem", "test/lorem/loremipsum.css")
+				//.loadCSS("test/lorem/loremipsum.css")
 				.loadTemplate("lorem", "test/lorem/loremipsum.html")
 				.perform(function(){
 					section._contents.update(templates.get("lorem"));
