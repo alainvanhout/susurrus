@@ -10,6 +10,10 @@ var dom = function() {
 		}
 	};
 
+	function startsWith(text, search){
+		return text.lastIndexOf(search, 0) === 0;
+	}
+
 	var util = {
 		bundleArguments : function(parent, params) {
 			var input = {};
@@ -44,11 +48,15 @@ var dom = function() {
 			if (props) {
 				var keys = Object.keys(props);
 				keys.forEach(function(key) {
-					if (key === '$class'){
-						if (parent.classList){
-							parent.classList.add(props[key]);
+					if (startsWith(key, "$")){
+						if (key === '$class'){
+							if (parent.classList){
+								parent.classList.add(props[key]);
+							} else {
+								parent.className += ' ' + props[key];
+							}
 						} else {
-							parent.className += ' ' + props[key];
+							parent.addEventListener(key.substring(1), props[key]);
 						}
 					} else {
 						parent.setAttribute(key, props[key]);

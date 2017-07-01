@@ -51,12 +51,20 @@ var loader = function() {
 			}
 		},
 		perform : function(fn) {
+			
 			var response = this;
 			this.primary = function(){
 				var result = null;
+				
 				if (fn !== null){
+					if (response.performingDone) {
+						return;
+					}
+					response.performingDone = true;
+					
 					result = fn();
 				}
+				
 				if (response.alias){
 					var source = findSource(response.alias);
 					if (!source) {
@@ -85,8 +93,8 @@ var loader = function() {
 		loadTemplate : function(templateKey, sourceUrl) {
 			return loadTemplate(templateKey, sourceUrl, this);
 		},
-		load : function(sourceUrl) {
-			return loadAlias(sourceUrl, this);
+		using : function(alias) {
+			return loadAlias(alias, this);
 		}
 	};
 
@@ -209,6 +217,9 @@ var loader = function() {
 	}
 
 	function loadTemplate(templateKey, sourceUrl, response) {
+		if (sourceUrl == null) {
+			sourceUrl = templateKey;
+		}
 		return load(sourceUrl, response, function(source, response) {
 			setTimeout(function() {
 				xhr(source, function(source) {
@@ -235,7 +246,7 @@ var loader = function() {
 		loadCSS : loadCSS,
 		loadText : loadText,
 		loadTemplate : loadTemplate,
-		load : loadAlias,
+		using : loadAlias,
 		textFor : textFor,
 		get : resultFor,
 		sources : sources,

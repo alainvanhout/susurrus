@@ -57,7 +57,7 @@ var templates = function(){
 		return registry[key];
 	};
 	
-	manager.get = function(key){
+	manager.get = function(key, props){
 		if (!registry[key]){
 			throw Error("Cannot find template for key " + key);
 		}
@@ -71,8 +71,22 @@ var templates = function(){
 			instance['_' + refId] = dom(node);
 		});
 		
+		if (props) {
+			apply(props, instance, Object.keys(props));
+		}
+		
 		return dom(instance);
 	};
+	
+	function apply(input, template, names){
+		names.forEach(function(name){		
+			if (input && input[name] && template["_" + name] && template["_" + name].update) {
+			 	template["_" + name].update(input[name]);
+			}
+		});
+	}
+	
+	manager.registry = registry;
 
 	return manager;
 }();
