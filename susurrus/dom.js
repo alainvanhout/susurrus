@@ -51,7 +51,9 @@ var dom = function() {
 					if (startsWith(key, "$")){
 						if (key === '$class'){
 							if (parent.classList){
-								parent.classList.add(props[key]);
+								props[key].split(" ").forEach(function(value){
+									parent.classList.add(value);
+								});
 							} else {
 								parent.className += ' ' + props[key];
 							}
@@ -80,7 +82,8 @@ var dom = function() {
 			} else if (typeof child === 'string' || typeof child === 'number') {
 				parent.innerHTML += child;
 			} else {
-				throw Error('Unable to append child of type' + (typeof child));
+				console.log(child);
+				throw Error('Unable to append child of type ' + (typeof child));
 			}
 		},
 		empty : function(input) {

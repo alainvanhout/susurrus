@@ -77,4 +77,8 @@ loader
 			content : [Placeholder(), waiter],
 			actions : contentButton
 		}));
+		
+		var button = Material.button().miniFab().icon("share");
+		//button.add({disabled: true});
+		document.body.appendChild(button);
 	});
