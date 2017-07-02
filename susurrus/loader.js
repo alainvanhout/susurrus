@@ -3,6 +3,7 @@ var loader = function() {
 	dom.using('link', 'script');
 
 	var sources = [];
+	var urlPreprocessor = null;
 
 	function Source(sourceUrl) {
 		this.url = sourceUrl;
@@ -163,6 +164,10 @@ var loader = function() {
 	}
 
 	function loadJS(sourceUrl, response) {
+		if (urlPreprocessor) {
+			sourceUrl = urlPreprocessor(sourceUrl);
+		}
+		
 		return load(sourceUrl, response, function(source) {
 			var e = dom.script({
 				src : sourceUrl,
@@ -180,6 +185,10 @@ var loader = function() {
 	};
 
 	function loadCSS(sourceUrl, response) {
+		if (urlPreprocessor) {
+			sourceUrl = urlPreprocessor(sourceUrl);
+		}
+		
 		return load(sourceUrl, response, function(source) {
 			var e = dom.link({
 				href : source.url,
@@ -193,6 +202,10 @@ var loader = function() {
 	}
 
 	function xhr(source, onSuccess){
+		if (urlPreprocessor) {
+			source.url = urlPreprocessor(source.url);
+		}
+		
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', source.url);
 		xhr.onreadystatechange = function() {
@@ -240,6 +253,7 @@ var loader = function() {
 			templates.add(templateKey, source.text);
 		});
 	}
+	
 
 	return {
 		loadJS : loadJS,
@@ -250,6 +264,9 @@ var loader = function() {
 		textFor : textFor,
 		get : resultFor,
 		sources : sources,
-		findSource : findSource
+		findSource : findSource,
+		setUrlProprocessor : function(fn) {
+			urlPreprocessor = fn;
+		}
 	};
 }();

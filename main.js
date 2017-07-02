@@ -1,5 +1,18 @@
 dom.using('p', 'img', 'small', 'div');
 
+function startsWith(text, search){
+	return text.lastIndexOf(search, 0) === 0;
+}
+
+
+loader.setUrlProprocessor(function(url){
+	if (startsWith(url, "material/")) {
+		return url + "?stamp=" + (new Date()).getTime();
+	}
+	
+	return url + "?foo=bar";
+});
+
 loader
 	.using("material--icon-button")
 	.using("material--chip-with-icon")
