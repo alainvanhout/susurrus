@@ -4,7 +4,6 @@ function startsWith(text, search){
 	return text.lastIndexOf(search, 0) === 0;
 }
 
-
 loader.setUrlProprocessor(function(url){
 	if (startsWith(url, "material/")) {
 		return url + "?stamp=" + (new Date()).getTime();
@@ -17,6 +16,7 @@ loader
 	.using("material--icon-button")
 	.using("material--chip-with-icon")
 	.using("material--card")
+	.using("material--dialog")
 	.perform(function(){
 
 		function Spinner(){
@@ -73,8 +73,16 @@ loader
 			action : function(){
 				var self = this;
 				setTimeout(function(){
-					alert("foo");
-					self.reset();
+					var closeButton = Material.button("Close", {$click: function(){
+						self.reset();
+						dialog.parentNode.removeChild(dialog);
+					}});
+					var dialog = Material.dialog({
+						title: "Some dialog",
+						content: "With some information",
+						actions: [closeButton]
+					});
+					document.body.appendChild(dialog);
 				}, 650);
 			}
 		});
@@ -94,4 +102,5 @@ loader
 		var button = Material.button().miniFab().icon("share");
 		//button.add({disabled: true});
 		document.body.appendChild(button);
+		
 	});

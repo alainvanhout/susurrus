@@ -44,13 +44,20 @@ var Material = {};
 	load("iconButton", "material/icon-button.html", "material--icon-button");
 	load("chipWithIcon", "material/chip-with-icon.html", "material--chip-with-icon");
 	load("card", "material/card.html", "material--card");
+	load("dialog", "material/dialog.html", "material--dialog", function(dialog){
+		dialog.style.zIndex = 10000;
+	});
 	
-	function load(name, templateUrl, alias){
+	function load(name, templateUrl, alias, fn){
 		loader
 			.loadTemplate(templateUrl)
 			.perform(function() {
 				Material[name] = function(input) {
-					return templates.get(templateUrl, input);
+					var result = templates.get(templateUrl, input);
+					if (fn){
+						fn(result);
+					}
+					return result;
 				};
 			}).as(alias);
 	}
