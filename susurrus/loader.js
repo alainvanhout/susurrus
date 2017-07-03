@@ -3,7 +3,7 @@ var loader = function() {
 	dom.using('link', 'script');
 
 	var sources = [];
-	var urlPreprocessor = null;
+	var urlPreprocessor = function(url) { return url};
 
 	function Source(sourceUrl) {
 		this.url = sourceUrl;
@@ -148,7 +148,7 @@ var loader = function() {
 
 			init(source, response);
 		}
-
+		
 		if (onSuccess) {
 			response.callbacks.push(function() {
 				onSuccess(source);
@@ -164,13 +164,9 @@ var loader = function() {
 	}
 
 	function loadJS(sourceUrl, response) {
-		if (urlPreprocessor) {
-			sourceUrl = urlPreprocessor(sourceUrl);
-		}
-		
 		return load(sourceUrl, response, function(source) {
 			var e = dom.script({
-				src : sourceUrl,
+				src : urlPreprocessor(sourceUrl),
 				async : "async",
 				type : "application/javascript"
 			});
@@ -185,13 +181,9 @@ var loader = function() {
 	};
 
 	function loadCSS(sourceUrl, response) {
-		if (urlPreprocessor) {
-			sourceUrl = urlPreprocessor(sourceUrl);
-		}
-		
 		return load(sourceUrl, response, function(source) {
 			var e = dom.link({
-				href : source.url,
+				href : urlPreprocessor(source.url),
 				type : "text/css",
 				rel : "stylesheet"
 			});
@@ -202,12 +194,8 @@ var loader = function() {
 	}
 
 	function xhr(source, onSuccess){
-		if (urlPreprocessor) {
-			source.url = urlPreprocessor(source.url);
-		}
-		
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', source.url);
+		xhr.open('GET', urlPreprocessor(source.url));
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4) {
 				source.text = xhr.responseText;
@@ -253,7 +241,6 @@ var loader = function() {
 			templates.add(templateKey, source.text);
 		});
 	}
-	
 
 	return {
 		loadJS : loadJS,
