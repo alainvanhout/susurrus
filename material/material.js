@@ -37,7 +37,6 @@ var Material = {};
 			return button;
 		};
 		
-		console.log({btn: button});
 		return button;
 	};
 
