@@ -17,6 +17,8 @@ var loader = function() {
 			this.responses.push(response);
 		},
 		setToLoaded : function() {
+			clearTimeout(this.logFailedRef);
+			this.logFailedRef = null;
 			this.loaded = true;
 			this.run();
 		},
@@ -155,6 +157,13 @@ var loader = function() {
 			});
 		}
 
+			
+		source.logFailedRef = setTimeout(function(){
+			if (!source.loaded) {
+				console.warn("Failed to load " + source.url);
+			}
+		}, 3000);
+			
 		setTimeout(function() {
 			source.run();
 		});
